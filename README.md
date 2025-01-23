@@ -4,7 +4,7 @@ Discover how to connect Braze to your Shopify Hydrogen storefront.
 
 ## Onsite tracking
 
-The first step is to initialize the Braze Web SDK. We recommend doing that by installing our NPM package and importing it in your `root.jsx` file. You will also need to include this setting in your vite.config.js file. 
+The first step is to initialize the Braze Web SDK. We recommend doing that by installing our NPM package and importing it in your `root.jsx` file. You will also need to include [this](https://www.braze.com/docs/developer_guide/platforms/web/sdk_integration?redirected=2#vite) setting in your vite.config.js file.
 
 Once imported, you must initialize the SDK within a “useEffect” hook:
 
@@ -254,7 +254,7 @@ async function loadCriticalData({context, params, request}) {
 
 ## Cart updates
 
-For cart updates, besides tracking the “cart_updated” event it's also necessary to send the cart token value over to Braze, as we use it for processing order webhooks received from Shopify. This is done by creating an user alias for the user with the Shopify cart token as its name. 
+For cart updates, besides tracking the “cart_updated” event it's also necessary to send the cart token value over to Braze, as we use it for processing order webhooks received from Shopify. This is done by creating an [user alias](https://www.braze.com/docs/api/objects_filters/user_alias_object) for the user with the Shopify cart token as its name. 
 
 
 First step is to define functions for tracking “cart_updated” and setting the cart token:
@@ -346,3 +346,5 @@ export function AddToCartButton({
   );
 }
 ```
+
+For more information on Remix fetchers, take a look at these [docs](https://remix.run/docs/ja/main/hooks/use-fetcher)
