@@ -1,5 +1,6 @@
+import * as braze from "@braze/web-sdk";
+
 export function trackProductViewed(product, storefrontUrl) {
-  const braze = window.braze || [];
   const eventData = {
     product_id: product.id.substring(product.id.lastIndexOf('/') + 1),
     product_name: product.title,
@@ -21,7 +22,6 @@ export function trackProductViewed(product, storefrontUrl) {
 }
 
 export function trackCartUpdated(cart, storefrontUrl) {
-  const braze = window.braze || [];
   const eventData = {
     cart_id: cart.id,
     total_value: cart.cost.totalAmount.amount,
@@ -49,8 +49,6 @@ export function trackCartUpdated(cart, storefrontUrl) {
 }
 
 export function trackCustomerLogin(customerData, storefrontUrl) {
-  const braze = window.braze || [];
-  
   const customerId = customerData.id.substring(customerData.id.lastIndexOf('/') + 1)
   const customerSessionKey = `ab.shopify.shopify_customer_${customerId}`;
   const alreadySetCustomerInfo = sessionStorage.getItem(customerSessionKey);
