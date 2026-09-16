@@ -344,3 +344,33 @@ export function AddToCartButton({
 ```
 
 For more information on Remix fetchers, take a look at these [docs](https://remix.run/docs/ja/main/hooks/use-fetcher)
+## Deploying
+
+This is a standard Hydrogen storefront, so it deploys to [Shopify Oxygen](https://shopify.dev/docs/storefronts/headless/hydrogen/deployments) with the Shopify CLI. From a clone of this repository:
+
+```bash
+npm install
+npx shopify hydrogen login     # note: `shopify auth login` does not exist
+npx shopify hydrogen link      # choose the storefront to deploy to
+npx shopify hydrogen deploy    # choose the Production environment
+```
+
+Four things that are easy to get wrong:
+
+- **Merging a change here does not deploy it.** Unless the storefront is configured for continuous deployment from a Git branch, nothing watches this repository. The CLI deploy above is what ships code.
+
+- **The redeploy button in the Hydrogen channel re-ships the build it already has.** It is not a way to pick up new commits.
+
+- **Deploy from a clean checkout.** The CLI will deploy uncommitted local changes, and labels the result `<commit> with additional changes` in the Hydrogen channel. The live site then matches no commit in the repository, and the next person deploying from a clean clone silently drops that work.
+
+- **`BRAZE_API_KEY` and `BRAZE_API_URL` are Oxygen environment variables**, set on the environment (Hydrogen channel → your storefront → Storefront settings) rather than built into the bundle. They are injected at runtime and survive redeploys.
+
+### Checking that events arrive
+
+Browse a product and add it to the cart, then look for `POST`s to your Braze SDK endpoint carrying `ecommerce.product_viewed` and `ecommerce.cart_updated`.
+
+A successful response does not by itself mean the event was kept. [Recommended events](https://www.braze.com/docs/user_guide/data/activation/events/recommended_events/ecommerce_events) are validated against a property schema on ingestion, and a payload that does not match it is discarded without a visible error. The user profile is still created either way, so the only symptom is that the events never appear on it.
+
+Property types matter as much as names — in particular, values that the Storefront API returns as strings may need converting before they are sent.
+
+The reliable check is to export the user profile a minute or so after browsing and confirm the events are on it.
