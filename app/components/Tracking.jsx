@@ -7,7 +7,9 @@ export function trackProductViewed(product, storefrontUrl) {
     variant_id: product.selectedOrFirstAvailableVariant.id.substring(product.selectedOrFirstAvailableVariant.id.lastIndexOf('/') + 1),
     image_url: product.selectedOrFirstAvailableVariant.image.url,
     product_url: `${storefrontUrl}/products/${product.handle}`,
-    price: product.selectedOrFirstAvailableVariant.price.amount,
+    // Shopify returns Money.amount as a string; the ecommerce.product_viewed recommended
+    // event requires a number, and a string is dropped on ingest.
+    price: Number(product.selectedOrFirstAvailableVariant.price.amount),
     currency: product.selectedOrFirstAvailableVariant.price.currencyCode,
     source: storefrontUrl,
     metadata: {
@@ -24,7 +26,8 @@ export function trackProductViewed(product, storefrontUrl) {
 export function trackCartUpdated(cart, storefrontUrl) {
   const eventData = {
     cart_id: cart.id,
-    total_value: cart.cost.totalAmount.amount,
+    // Same as price above: ecommerce.cart_updated requires total_value to be a number.
+    total_value: Number(cart.cost.totalAmount.amount),
     currency: cart.cost.totalAmount.currencyCode,
 
     products: cart.lines.nodes.map((line) => {
